@@ -1,7 +1,7 @@
 number row - various different puyos
 
 s - save chain
-l - load chain (not implemented)
+l - load chain
 f - toggle fullscreen
 space - play mode
 escape - edit mode
