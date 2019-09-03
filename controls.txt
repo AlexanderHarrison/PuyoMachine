@@ -11,3 +11,5 @@ left mouse - place puyos
 right mouse - delete puyos
 
 note you cannot save while in play mode
+
+All other stuff you can figure out yourself. Good luck!
