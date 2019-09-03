@@ -1,0 +1,13 @@
+number row - various different puyos
+
+s - save chain
+l - load chain (not implemented)
+f - toggle fullscreen
+space - play mode
+escape - edit mode
+enter/return - save while in save mode
+
+left mouse - place puyos
+right mouse - delete puyos
+
+note you cannot save while in play mode
