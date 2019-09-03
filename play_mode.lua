@@ -41,12 +41,13 @@ play.update = function (dt)
         if play_mode == "fall" then
             play.fall()
             play_mode = "pop"
+            new_canvas()
         elseif play_mode == "pop" then
             if play.pop() then
                 play_mode = "fall"
+                new_canvas()
             else
                 play_mode = "end"
-                --columns_changed = nil -- triggers first update again fix pls thank TODO
             end
         else
             --end of chain, do nothing

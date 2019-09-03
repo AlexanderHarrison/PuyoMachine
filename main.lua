@@ -3,7 +3,6 @@ local play_mode = require "play_mode"
 
 local utf8 = require("utf8")
 local bitser = require 'bitser'
-print(bitser)
 
 GRID_SIZE = nil
 PUYOS = {
@@ -53,6 +52,9 @@ save_name = ""
 load_name = ""
 dir_table = nil
 
+puyo_canvas = nil
+BACKGROUND_COLOR = {0, 0, 0}
+
 function init ()
     font = love.graphics.newFont("Inconsolita.ttf", 32)
     small_font = love.graphics.newFont("Inconsolita.ttf", 16)
@@ -65,11 +67,17 @@ function init ()
     local _x, _y = love.mouse.getPosition()
     mouse_pos = {x = _x, y = _y}
     selected_puyo = 1
+
+    puyo_canvas = love.graphics.newCanvas()
 end
 
 function love.load()
     init()
     play_mode.init()
+end
+
+function love.resize (w, h)
+    new_canvas()
 end
 
 function love.update(dt)
@@ -80,6 +88,21 @@ function love.update(dt)
     end
 
     sleep(dt)
+end
+
+function new_canvas ()
+    puyo_canvas = love.graphics.newCanvas()
+
+    love.graphics.setCanvas(puyo_canvas)
+
+    for i, column in pairs(grid.grid()) do
+        for j, tile_int in pairs(column) do
+            love.graphics.draw(PUYOS[REV_PUYO_ENUM[tile_int]], i * 32 - 32, j * 32 - 32)
+        end
+    end
+
+    love.graphics.setCanvas()
+
 end
 
 function love.draw()
@@ -123,11 +146,10 @@ function love.draw()
         end
         
     else
-        for i, column in pairs(grid.grid()) do
-            for j, tile_int in pairs(column) do
-                love.graphics.draw(PUYOS[REV_PUYO_ENUM[tile_int]], i * 32 - 32, j * 32 - 32)
-            end
-        end
+        
+
+        love.graphics.draw(puyo_canvas)
+
         if state == "edit" and not love.mouse.isDown(2) then
             love.graphics.draw(PUYOS[REV_PUYO_ENUM[selected_puyo]], mouse_pos.x, mouse_pos.y)
         end
@@ -143,9 +165,28 @@ function edit_update(dt)
     mouse_pos.y = round_nearest_multiple(y, 32)
 
     if love.mouse.isDown(1) then
-        grid.set(mouse_pos.x / 32 + 1, mouse_pos.y / 32 + 1, selected_puyo)
+        local x = mouse_pos.x / 32 + 1
+        local y = mouse_pos.y / 32 + 1
+        grid.set(x, y, selected_puyo)
+
+        love.graphics.setCanvas(puyo_canvas)
+            love.graphics.setColor(unpack(BACKGROUND_COLOR))
+            love.graphics.rectangle("fill", x * 32 - 32, y * 32 - 32, 32, 32)
+            love.graphics.setColor(1, 1, 1)
+            love.graphics.draw(PUYOS[REV_PUYO_ENUM[selected_puyo]], x * 32 - 32, y * 32 - 32)
+        love.graphics.setCanvas()
+
     elseif love.mouse.isDown(2) then
-        grid.remove(mouse_pos.x / 32 + 1, mouse_pos.y / 32 + 1)
+        local x = mouse_pos.x / 32 + 1
+        local y = mouse_pos.y / 32 + 1
+        grid.remove(x, y)
+
+        love.graphics.setCanvas(puyo_canvas)
+            love.graphics.setColor(unpack(BACKGROUND_COLOR))
+            love.graphics.rectangle("fill", x * 32 - 32, y * 32 - 32, 32, 32)
+            love.graphics.setColor(1, 1, 1)
+        love.graphics.setCanvas()
+
     end
 end
 
